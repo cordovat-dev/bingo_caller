@@ -4,10 +4,12 @@ RUTA=`dirname $0`
 ARCHLISTA="$RUTA/lista.txt"
 ARCHTEMP=`mktemp /tmp/bingo_XXXXXXXX`
 ARCHTEMP2=`mktemp /tmp/bingo_XXXXXXXX`
+LOG=`mktemp /tmp/bingo_XXXXXXXX.log`
 vcont=0
 function salir {
 	rm "${ARCHTEMP}" "${ARCHTEMP2}"
 	echo -en "\n Ejecutado $vcont veces \n"
+	echo ver listado en $LOG
 	exit $1
 }
 
@@ -30,6 +32,7 @@ while true; do
 	NUMAL=$(shuf -i 1-$LONGARCH -n 1)
 
 	NUM=$(sed -n -e ${NUMAL}p "${ARCHTEMP}")
+	echo $NUM >> "$LOG"
 	espeak -v es "$NUM" 2> /dev/null &
 	figlet -f "$RUTA/fonts/doh.flf" $NUM
 	#figlet -f "$RUTA/fonts/big.flf" $NUM
@@ -39,7 +42,7 @@ while true; do
 	#DISPLAY=:0.0 notify-send -i "$(readlink -e $RUTA/numeros/$NUM.png)" "Bingo" "Bingo"
 	echo
 	sed -i.bak -e "${NUMAL},${NUMAL}d" "${ARCHTEMP}"
-	sleep 8
+	sleep 5
 done
 
 salir 0
